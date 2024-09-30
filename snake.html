@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game Masterpiece</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+        #gameContainer {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            background-color: #333;
+            border: 5px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        canvas {
+            background-color: #222;
+            display: block;
+        }
+        #controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #6dd5ed;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #2193b0;
+        }
+        #status {
+            margin-top: 20px;
+            color: white;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            #gameContainer {
+                width: 300px;
+                height: 300px;
+            }
+            button {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <h1>Snake & Apple Game</h1>
+        <div id="gameContainer">
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+        </div>
+        <div id="controls">
+            <button id="startButton">Start Game</button>
+        </div>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const startButton = document.getElementById("startButton");
+        const statusDisplay = document.getElementById("status");
+        const gridSize = 20;
+        const canvasSize = 400;
+        let snake, apple, direction, gameInterval, gameOver, touchStartX, touchStartY;
+
+        function resetGame() {
+            snake = [
+                {x: 200, y: 200}
+            ]; // Snake starts with one block
+            apple = spawnApple();
+            direction = {x: 0, y: 0}; // Snake stays static before game starts
+            gameOver = false;
+            statusDisplay.textContent = '';
+            drawSnake();
+            drawApple();
+        }
+
+        function spawnApple() {
+            const randomPosition = (size) => Math.floor(Math.random() * (canvasSize / size)) * size;
+            return {x: randomPosition(gridSize), y: randomPosition(gridSize)};
+        }
+
+        function drawSnake() {
+            snake.forEach(segment => {
+                ctx.fillStyle = "#39FF14"; // Neon Green
+                ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#1e7c00";
+                ctx.strokeRect(segment.x, segment.y, gridSize, gridSize);
+                ctx.lineJoin = "round"; // Rounded corners for 3D look
+            });
+        }
+
+        function drawApple() {
+            ctx.beginPath();
+            ctx.arc(apple.x + gridSize / 2, apple.y + gridSize / 2, gridSize / 2, 0, 2 * Math.PI); // Round apple
+            ctx.fillStyle = "#FF6347"; // Apple color
+            ctx.fill();
+        }
+
+        function moveSnake() {
+            const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+            snake.unshift(head);
+            if (head.x === apple.x && head.y === apple.y) {
+                apple = spawnApple();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= canvasSize || head.y < 0 || head.y >= canvasSize) {
+                return true;
+            }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function gameLoop() {
+            if (gameOver) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            moveSnake();
+            drawSnake();
+            drawApple();
+            if (checkCollision()) {
+                gameOver = true;
+                clearInterval(gameInterval);
+                statusDisplay.textContent = "Game Over! Try Again.";
+                startButton.textContent = "Restart Game";
+            }
+        }
+
+        function startGame() {
+            direction = {x: gridSize, y: 0}; // Set initial direction
+            clearInterval(gameInterval);
+            gameInterval = setInterval(gameLoop, 180); // Faster speed
+            startButton.textContent = "Restart Game";
+        }
+
+        // Start game with Enter or Arrow keys
+        window.addEventListener("keydown", (e) => {
+            const key = e.key;
+            if (gameInterval === undefined && (key === "Enter" || key.startsWith("Arrow"))) {
+                startGame();
+            }
+            if (key === "ArrowUp" && direction.y === 0) {
+                direction = {x: 0, y: -gridSize};
+            } else if (key === "ArrowDown" && direction.y === 0) {
+                direction = {x: 0, y: gridSize};
+            } else if (key === "ArrowLeft" && direction.x === 0) {
+                direction = {x: -gridSize, y: 0};
+            } else if (key === "ArrowRight" && direction.x === 0) {
+                direction = {x: gridSize, y: 0};
+            }
+            // Restart game with Enter key if game over
+            if (gameOver && key === "Enter") {
+                resetGame();
+                startGame();
+            }
+        });
+
+        // Touch events for mobile
+        canvas.addEventListener("touchstart", (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        canvas.addEventListener("touchmove", (e) => {
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0 && direction.x === 0) {
+                    direction = {x: gridSize, y: 0};
+                } else if (diffX < 0 && direction.x === 0) {
+                    direction = {x: -gridSize, y: 0};
+                }
+            } else {
+                if (diffY > 0 && direction.y === 0) {
+                    direction = {x: 0, y: gridSize};
+                } else if (diffY < 0 && direction.y === 0) {
+                    direction = {x: 0, y: -gridSize};
+                }
+            }
+        });
+
+        startButton.addEventListener("click", () => {
+            if (gameOver) {
+                resetGame();
+            }
+            startGame();
+        });
+
+        // Initialize game
+        resetGame();
+    </script>
+</body>
+</html>

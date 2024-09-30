@@ -1,0 +1,129 @@
+/* General Body Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #6a0dad 0%, #b07bfd 100%);
+    color: white;
+    min-height: 100vh;
+    justify-content: center;
+}
+
+header {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    margin-bottom: 40px;
+    width: 90%;
+    max-width: 800px;
+}
+
+h1 {
+    font-size: 3rem;
+    letter-spacing: 3px;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    margin-top: 10px;
+}
+
+/* Game Grid Styling */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 games per row on larger screens */
+    gap: 50px;
+    max-width: 1000px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 games per row on tablets and smaller */
+    }
+}
+
+@media (max-width: 600px) {
+    .game-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 game per row on very small screens */
+    }
+}
+
+/* Game Item Styling */
+.game-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+}
+
+.game-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Logo Background Styling */
+.logo-background {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Game Logo Styling */
+.game-logo {
+    max-width: 80px;
+    height: auto;
+    transition: opacity 0.3s ease;
+}
+
+.game-item:hover .game-logo {
+    opacity: 0.85;
+}
+
+/* Game Title Styling */
+h2 {
+    font-size: 1.6rem;
+    margin-top: 15px;
+    color: #fff;
+    text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsiveness for header and text */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.2rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+}
+
+/* Adjust game-item for better spacing */
+.game-item {
+    padding: 30px 15px; /* Added padding */
+    width: 100%; /* Ensure width covers grid area */
+}
