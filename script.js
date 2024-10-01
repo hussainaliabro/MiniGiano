@@ -4,4 +4,7 @@ function startGame(game) {
     } else if (game === 'tictactoe') {
         window.location.href = 'tictactoe.html'; // Redirect to Tic Tac Toe game
     }
+    else if (game === 'pong') {
+        window.location.href = 'pong.html';
+    }
 }
